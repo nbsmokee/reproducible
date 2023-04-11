@@ -128,8 +128,10 @@ setMethod(
         stop("Please install terra package")
       if (any(nchar(terra::sources(object)) > 0)) {
         out <- lapply(terra::sources(object), function(x) {
-          x <- sub(r"(^.*:\")", "", x)
-          x <- sub(r"(\":.*$)", "", x)
+          if (grepl("^NETCDF:", x)) {
+            x <- sub("^NETCDF:\"", "", x)
+            x <- sub("\":.*$", "", x)
+          }
           digest(file = x, length = length, algo = algo)
         })
         dig <- .robustDigest(append(
